@@ -114,7 +114,7 @@ class BepmsDB extends CI_Model {
 	public function systemLoginAuthentication($email, $password){
 		$this->db->select('*');
 		$this->db->from('bepms_users');
-		$this->db->join('bepms_project_positions', 'bepms_users.user_id = bepms_project_positions.user_id');
+		$this->db->join('bepms_project_member_positions', 'bepms_users.user_id = bepms_project_member_positions.user_id');
 		$this->db->where(
 			array(
 				'bepms_users.user_email' => $email,
@@ -127,8 +127,22 @@ class BepmsDB extends CI_Model {
 		return (sizeof($query) === 1) ? $query[0] : false;
 	}
 
-	public function userPositions(){
-		//user position according to the systems
+	//list of all the system assigned to the user
+	//expected output system_id, position_name[], latest_system_id, system_name
+	public function systemListByUserID($userId){
+		$this->db->select('bs.system_id, bpp.project_position_name, bs.system_creation_date');
+		$this->db->from('bepms_systems as bs');
+		$this->db->join('bepms_projects as bp', 'bs.system_id = bp.system_id');
+		$this->db->join('bepms_project_member_positions as bpmp', 'bp.project_id = bpmp.project_id');
+		$this->db->join('bepms_project_positions as bpp', 'bpp.project_position_id = bpmp.project_position_id');
+		$this->db->where(
+			array(
+				'bpmp.user_id' => $userId
+			)
+		);
+		//echo $this->db->get_compiled_select();
+		$query = $this->db->get()-> result();
+		return $query;
 	}
 
 	//---------------- A D M I N -----------------------------
