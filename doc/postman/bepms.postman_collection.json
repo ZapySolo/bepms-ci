@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "b97d44ee-df1a-4f1d-ac92-fdef1d8d58da",
+		"name": "bepms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "createUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtZXNzYWdlIjoiU3VjY2Vzc2Z1bGx5IEF1dGhlbnRpY2F0ZWQiLCJ0aW1lc3RhbXAiOjE1ODE3NDc0MjV9.Gzj0D3jxjyF5PiFvuNyGlbOGklIcrxKbwkSkPi4gD9M",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "a@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/bepms/api/createUser",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"createUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkUserEmailExist",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/bepms/api/checkUserEmailExist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"checkUserEmailExist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createSystem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/bepms/api/createSystem?name=Computer Department 2022",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"createSystem"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Computer Department 2022"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "systemLogin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "hod@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "000",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/bepms/api/systemLogin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"systemLogin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verifyJWTToken",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJsblwvTmx4TlJzZkR3OHM0UElMc2pFVSs4dzVFVGR0cmxtalI3NGttSnhOTT0iLCJ0aW1lc3RhbXAiOjE1ODE1MzE2NTgsIm5iZiI6MTU4MTUzMTY2OCwiZXhwIjoxNTgyMTM2NDU4LCJkYXRhIjp7InVzZXJJZCI6IjUiLCJ1c2VyRW1haWwiOiJob2RAZ21haWwuY29tIiwidHlwZSI6InN5c3RlbSJ9fQ.KWBvIg_9bkhs3rEdMN_EyMh2QNOgbCKVTO0INGELegg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/bepms/api/verifyJWTToken?Authorizatioin=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJzM0g3UDZtandrTW0wTVR1Rmphc0JxRzJUQm1mYXNEUHlUWTVRdWg1VmVBPSIsInRpbWVzdGFtcCI6MTU4MTk4MTYxOSwibmJmIjoxNTgxOTgxNjI5LCJleHAiOjE1ODI1ODY0MTksImRhdGEiOnsidXNlcklkIjoiNSIsInVzZXJFbWFpbCI6ImhvZEBnbWFpbC5jb20iLCJ0eXBlIjoic3lzdGVtIn19.yG4XXtgavVloLtXub-y85LoBezYvSnb6DeGUB019lIQ",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"verifyJWTToken"
+					],
+					"query": [
+						{
+							"key": "Authorizatioin",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJzM0g3UDZtandrTW0wTVR1Rmphc0JxRzJUQm1mYXNEUHlUWTVRdWg1VmVBPSIsInRpbWVzdGFtcCI6MTU4MTk4MTYxOSwibmJmIjoxNTgxOTgxNjI5LCJleHAiOjE1ODI1ODY0MTksImRhdGEiOnsidXNlcklkIjoiNSIsInVzZXJFbWFpbCI6ImhvZEBnbWFpbC5jb20iLCJ0eXBlIjoic3lzdGVtIn19.yG4XXtgavVloLtXub-y85LoBezYvSnb6DeGUB019lIQ"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "systemListByUserID",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/bepms/api/systemListByUserID?id=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"bepms",
+						"api",
+						"systemListByUserID"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
