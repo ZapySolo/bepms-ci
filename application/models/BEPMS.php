@@ -32,8 +32,30 @@ class Bepms extends CI_Model {
 		$query = $this->db->get()-> result();
 		return $query;
     }
-	
+    
+    public function createNotification($from_user_id, $to_user_id, $notification_message, $project_id) {
+        $data = array(
+            'to_user_id' => $to_user_id,
+            'from_user_id' => $from_user_id,
+            'notification_message' => $notification_message,
+            'project_id' => $project_id,
+		);
+    
+        $result = $this->db->insert('bepms_notifications', $data);
+    }
 
+    public function userNameEmaiByUserId($user_id){
+        $this->db->select('user_email, user_display_name');
+        $this->db->from('bepms_users');
+		$this->db->where(
+			array(
+                'user_id' => $user_id,
+			)
+        );
+		$query = $this->db->get()-> result();
+		return $query;
+    }
+	
     //----------------- S Y S T E M -------------------------
     
     public function systemFacultyLoginAuthentication($userEmail, $password){
@@ -88,7 +110,7 @@ class Bepms extends CI_Model {
     }
 
     public function studentProjectDetailsByUserID($user_id, $project_id){
-        $this->db->select('bp.project_cover_img, bp.project_profile_img, bp.project_name, bp.project_description, bp.project_status, bp.project_attachment,
+        $this->db->select('bp.project_id, bp.project_cover_img, bp.project_profile_img, bp.project_name, bp.project_description, bp.project_status, bp.project_attachment,
         bpmp.project_position_name');
 		$this->db->from('bepms_projects as bp');
         $this->db->join('bepms_project_member_positions as bpmp', "bp.project_id = bpmp.project_id AND
@@ -147,7 +169,7 @@ class Bepms extends CI_Model {
 
     public function studentProjectReportDetails($user_id, $report_id){
         $this->db->select('br.report_title, br.report_creation_date, br.report_status_guide, br.report_status_pc, br.report_status_hod,
-        br.report_id, br.report_description, br.report_status_claim, br.report_disapproved_reason, br.report_change_assign, br.report_attachment');
+        br.report_id, br.report_description, br.report_status_claim, br.report_disapproved_reason, br.report_change_assign, br.report_attachment,bpmp.project_position_name');
         $this->db->from('bepms_reports as br');
         $this->db->join('bepms_projects as bp','br.project_id = bp.project_id');
         $this->db->join('bepms_project_member_positions as bpmp', "bp.project_id = bpmp.project_id");
@@ -359,15 +381,18 @@ class Bepms extends CI_Model {
             $projectQuery = $this->db->get()-> result();
 
             //reports
-            $this->db->select('bp.project_profile_img, br.report_title, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name');
+            $this->db->select('bp.project_profile_img,bp.project_name , br.report_description,br.report_creation_date, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name as leader_display_name');
             $this->db->from('bepms_reports as br');
             $this->db->join('bepms_projects as bp', "bp.project_id = br.project_id");
             $this->db->join('bepms_project_member_positions as bpmp_leader', "bp.project_id = bpmp_leader.project_id AND (bpmp_leader.project_position_name = 'leader')");
-            $this->db->join('bepms_users as leader_bu', "leader_bu.user_id = bpmp_leader.user_id");
+            $this->db->join('bepms_users as leader_bu', "leader_bu.user_id = bpmp_leader.user_id");//
             $this->db->join('bepms_project_member_positions as bpmp_user', "bp.project_id = bpmp_user.project_id");
             $this->db->join('bepms_users as user_bu', "user_bu.user_id = bpmp_user.user_id");
             $this->db->join('bepms_systems as bs', 'bs.system_id = bp.system_id');
             $this->db->where($where);
+            $this->db->where(array(
+                'report_status_'.$user_position.'!=' => '---'
+            ));
             $this->db->limit(10);
             $reportQuery = $this->db->get()-> result();
 
@@ -399,7 +424,7 @@ class Bepms extends CI_Model {
             $projectQuery = array_merge($projectQueryLikeProjectName, $projectQueryLikeLeaderName);
 
             //reports like %project_name%
-            $this->db->select('bp.project_profile_img, br.report_title, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name, bp.project_name');
+            $this->db->select('bp.project_profile_img,bp.project_name , br.report_description,br.report_creation_date, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name as leader_display_name');
             $this->db->from('bepms_reports as br');
             $this->db->join('bepms_projects as bp', "bp.project_id = br.project_id");
             $this->db->join('bepms_project_member_positions as bpmp_leader', "bp.project_id = bpmp_leader.project_id AND (bpmp_leader.project_position_name = 'leader')");
@@ -408,12 +433,15 @@ class Bepms extends CI_Model {
             $this->db->join('bepms_users as user_bu', "user_bu.user_id = bpmp_user.user_id");
             $this->db->join('bepms_systems as bs', 'bs.system_id = bp.system_id');
             $this->db->where($where);
+            $this->db->where(array(
+                'report_status_'.$user_position.'!=' => '---'
+            ));
             $this->db->like('bp.project_name', $search_input);
             $this->db->limit(10);
             $reportQueryLikeLeaderName = $this->db->get()-> result();
 
             //reports like %leader_name%
-            $this->db->select('bp.project_profile_img, br.report_title, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name, bp.project_name');
+            $this->db->select('bp.project_profile_img,bp.project_name , br.report_description,br.report_creation_date, br.report_status_'.$user_position.' as report_status_user, leader_bu.user_display_name as leader_display_name');
             $this->db->from('bepms_reports as br');
             $this->db->join('bepms_projects as bp', "bp.project_id = br.project_id");
             $this->db->join('bepms_project_member_positions as bpmp_leader', "bp.project_id = bpmp_leader.project_id AND (bpmp_leader.project_position_name = 'leader')");
@@ -422,6 +450,9 @@ class Bepms extends CI_Model {
             $this->db->join('bepms_users as user_bu', "user_bu.user_id = bpmp_user.user_id");
             $this->db->join('bepms_systems as bs', 'bs.system_id = bp.system_id');
             $this->db->where($where);
+            $this->db->where(array(
+                'report_status_'.$user_position.'!=' => '---'
+            ));
             $this->db->like('leader_bu.user_display_name', $search_input);
             $this->db->limit(10);
             $reportQueryLikeReportTitle = $this->db->get()-> result();
@@ -631,17 +662,17 @@ class Bepms extends CI_Model {
 
         if($project_position_name === 'hod'){
             $data = [
-                'report_status_hod' => 'changes',
+                'report_status_hod' => 'modify',
                 'report_change_assign' => $report_change_assign
             ];
         } else if($project_position_name === 'pc'){
             $data = [
-                'report_status_pc' => 'changes',
+                'report_status_pc' => 'modify',
                 'report_change_assign' => $report_change_assign
             ];
         } else if($project_position_name === 'guide'){
             $data = [
-                'report_status_guide' => 'changes',
+                'report_status_guide' => 'modify',
                 'report_change_assign' => $report_change_assign
             ];
         }
@@ -666,7 +697,34 @@ class Bepms extends CI_Model {
         }
     }
 
+    public function leaderEditProjectDetails($project_id, $update){
+        $this->db->where('project_id', $project_id);
+        $this->db->update('bepms_projects', $update);
+        if($this->db->affected_rows() >= 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
+    public function getUserIdByProjectIdPositionName($project_id, $project_position_name){
+        $this->db->select('user_id');
+        $this->db->from('bepms_project_member_positions');
+		$this->db->where(
+			array(
+                'project_id' => $project_id,
+                'project_position_name' => $project_position_name,
+			)
+        );
+        $query = $this->db->get()-> result();
+        if($query){
+            return $query[0];
+        }
+		return [];
+    }
+
+
+    
 
 
 
@@ -725,7 +783,130 @@ class Bepms extends CI_Model {
 		$query = $this->db->get()-> result();
 		//var_dump($query[0]);
 		return (sizeof($query) === 1) ? $query[0] : false;
-	}
+    }
+    
+    public function adminSystemListBySearchInput($user_id, $search_input){
+        $this->db->select('bs.system_id, bs.system_name, bs.system_creation_date');
+        $this->db->from('bepms_systems as bs');
+        $this->db->join('bepms_admins as ba','bs.admin_id = ba.admin_id');
 
+        $this->db->where(
+            array(
+                'ba.user_id' => $user_id,
+            )
+        );
+        if($search_input !== ''){
+            $this->db->like('bs.system_name', $search_input);
+        }
+        $query = $this->db->get()-> result();
+        return $query;
+    }
+
+    public function adminProjectListBySystemId($user_id, $system_id){
+        $this->db->select('bp.project_name, bp.project_id');
+        $this->db->from('bepms_projects as bp');
+        $this->db->join('bepms_systems as bs','bp.system_id = bs.system_id');
+        $this->db->join('bepms_admins as ba','bs.admin_id = ba.admin_id');
+        $this->db->where(
+            array(
+                'ba.user_id' => $user_id,
+                'bs.system_id' => $system_id
+            )
+        );
+        $query = $this->db->get()-> result();
+        return $query;
+    }
+
+    public function getAdminIdByUserId($user_id){
+        $this->db->select('admin_id');
+        $this->db->from('bepms_admins');
+        $this->db->where(
+            array(
+                'user_id' => $user_id
+            )
+        );
+        $query = $this->db->get()-> result();
+        return $query;
+    }
+
+    public function adminCreateNewSystemByDetails($admin_id, $system_name, $system_description) {
+        $data = array(
+            'admin_id' => $admin_id,
+            'system_name' => $system_name,
+            'system_description' => $system_description,
+		);
+		$this->db->insert('bepms_systems', $data);
+		$last_id = $this->db->insert_id();
+		return ($this->db->affected_rows() != 1) ? [] : ['system_list_id' => $last_id];
+    }
+
+    public function insertNewProjectPosition($project_id, $user_id, $project_position_name){
+        $data = array(
+            'project_id' => $project_id,
+            'user_id' => $user_id,
+            'project_position_name' => $project_position_name,
+		);
+		$this->db->insert('bepms_project_member_positions', $data);
+
+		$last_id = $this->db->insert_id();
+		return ($this->db->affected_rows() != 1) ? [] : ['bepms_project_member_positions_id' => $last_id];
+    }
+
+    public function adminSystemListBySystemId($admin_id, $system_id){
+        $this->db->select('*');
+        $this->db->from('bepms_systems');
+        $this->db->where(
+            array(
+                'admin_id' => $admin_id,
+                'system_id' => $system_id
+            )
+        );
+        $query = $this->db->get()->result();
+        return $query;
+    }
+
+    public function createNewProject($system_id){
+        $data = array(
+            'system_id' => $system_id
+		);
+		$this->db->insert('bepms_projects', $data);
+
+		$last_id = $this->db->insert_id();
+		return ($this->db->affected_rows() != 1) ? [] : $last_id;
+    }
+
+    public function insertNewProjectPositionByUserEmail($project_id, $user_email, $project_position_name){
+        $this->db->select('user_id');
+        $this->db->from('bepms_users');
+        $this->db->where(
+            array(
+                'user_email' => $user_email
+            )
+        );
+        $query = $this->db->get()-> result();
+
+        if(!$query){
+            //no such user email found, so create a new user
+            $data = array(
+                'user_email' => $user_email
+            );
+            $this->db->insert('bepms_users', $data);
+            $last_id = $this->db->insert_id();
+            $user_id =  ($this->db->affected_rows() != 1) ? '' :  $last_id;
+        } else {
+            $user_id = $query[0]->user_id;
+        }
+
+        //insert into  project position
+        //req -> project_id, user_id, project_position_name
+        $data = array(
+            'project_id' => $project_id,
+            'user_id' => $user_id,
+            'project_position_name' => $project_position_name
+        );
+        $this->db->insert('bepms_project_member_positions', $data);
+        $last_id = $this->db->insert_id();
+        $bepms_project_member_positions_id =  ($this->db->affected_rows() != 1) ? '' :  $last_id;
+    }
 
 }

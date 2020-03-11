@@ -7,7 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * Can be configured by modifying application/config/mybb.php
  */
-class BepmsDB extends CI_Model {
+class Bepmsdb extends CI_Model {
 
 	/**
 	 * Constructor.
